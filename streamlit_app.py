@@ -52,13 +52,19 @@ else:
                 image = Image.open(uploaded_image)
                 encoded_image = encode_image(image)
                 messages.append(
-                    {"role": "user", "content": f"Here's an image for further analysis: data:image/jpeg;base64,{encoded_image}"}
+                    {
+                        "role": "user", 
+                        "content": [
+                            {"type": "text", "text": "Please analyze the following image for further information."},
+                            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}}
+                        ]
+                    }
                 )
 
             # Generate an answer using the OpenAI API
             try:
                 response = openai.ChatCompletion.create(
-                    model="gpt-4-vision",
+                    model="gpt-4o",
                     messages=messages,
                     max_tokens=1000,
                     temperature=0.7,
