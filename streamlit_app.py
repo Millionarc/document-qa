@@ -26,7 +26,7 @@ else:
     symptoms = st.text_input("Symptoms", placeholder="Enter your symptoms")
     severity = st.select_slider(
     "How Severe Are Your Symptoms?",
-    severity_options = [
+    options = [
         "1. Very Mild",
         "2. Mild",
         "3. Mild-Moderate",
@@ -35,7 +35,7 @@ else:
         "6. Severe",
         "7. Very Severe",
         "8. Extremely Severe",
-    ]    
+    ])    
     st.write(severity)
     
     
