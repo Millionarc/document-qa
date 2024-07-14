@@ -5,7 +5,7 @@ import base64
 import io
 
 # Show title and description.
-st.title("🩺 Smart Healthcare Advisor")
+st.title("🩺 Smart Healthcare Advisor test")
 st.write(
     "Input your symptoms, duration, and any additional information below. "
     "Optionally, you can upload an image. The app will analyze the information and provide health advice using GPT. "
