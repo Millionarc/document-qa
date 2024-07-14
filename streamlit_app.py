@@ -107,16 +107,8 @@ else:
             audio_file.close()
         except Exception as e:
             st.error(f"An error occurred with TTS: {e}")
-    st.write("In case of an emergency, please contact your local medical facility or call your country's emergency number.
-    
-             
-             
-             
-             
-             
-             
-             ")
-
+    st.write("In case of an emergency, please contact your local medical facility or call your country's emergency number.")
+     st.write("")
 
     # Add "Chat with a doctor" button
     if st.button("Chat with a doctor"):
