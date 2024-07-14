@@ -76,24 +76,26 @@ else:
                         ]
                     }
                 )
-            # Generate an answer using the OpenAI API
-            try:
-                response = openai.chat.completions.create(
-                    model="gpt-4o",
-                    messages=messages,
-                    max_tokens=1000,
-                    temperature=0.7,
-                )
 
-                st.subheader("Health Advice")
-                health_advice = response.choices[0].message.content.strip()
-                st.write(health_advice)
-                
-                # Save the advice in session state
-                st.session_state.health_advice = health_advice
+            # Show a loading spinner while the AI is generating a response
+            with st.spinner('Analyzing your symptoms...'):
+                try:
+                    response = openai.chat.completions.create(
+                        model="gpt-4o",
+                        messages=messages,
+                        max_tokens=1000,
+                        temperature=0.7,
+                    )
 
-            except Exception as e:
-                st.error(f"An error occurred: {e}")
+                    st.subheader("Health Advice")
+                    health_advice = response.choices[0].message.content.strip()
+                    st.write(health_advice)
+                    
+                    # Save the advice in session state
+                    st.session_state.health_advice = health_advice
+
+                except Exception as e:
+                    st.error(f"An error occurred: {e}")
 
     # Play audio if "Trouble Reading?" button is pressed
     if "health_advice" in st.session_state:
