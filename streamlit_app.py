@@ -39,12 +39,15 @@ slides = [
 ]
 
 # Create a slider to navigate through the slides
-slide_number = st.slider("Navigate through the slides", 1, len(slides), 1)
 
 # Display the selected slide
+slide_number = 1
+
 slide = slides[slide_number - 1]
 st.title(slide["title"])
 st.write(slide["content"])
+slide_number = st.slider("Navigate through the slides", 1, len(slides), 1)
+
 if slide["image"]:
     st.image(slide["image"])
     
