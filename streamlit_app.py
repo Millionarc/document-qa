@@ -18,7 +18,7 @@ if not openai_api_key:
     st.info("Please add your OpenAI API key to continue.", icon="🗝️")
 else:
     # Initialize OpenAI API
-    client = openai.OpenAI(api_key=openai_api_key)
+    openai.api_key = openai_api_key
 
     # Input fields for symptoms, duration, and additional information
     symptoms = st.text_input("Symptoms", placeholder="Enter your symptoms")
@@ -51,26 +51,11 @@ else:
             if uploaded_image:
                 image = Image.open(uploaded_image)
                 encoded_image = encode_image(image)
-                image_message = {
-                    "role": "user",
-                    "content": {
-                        "type": "text",
-                        "text": "Here's an image for further analysis."
-                    }
-                }
-                image_data = {
-                    "role": "user",
-                    "content": {
-                        "type": "image",
-                        "data": f"data:image/jpeg;base64,{encoded_image}"
-                    }
-                }
-                messages.append(image_message)
-                messages.append(image_data)
+                messages.append({"role": "user", "content": f"Here's an image for further analysis: data:image/jpeg;base64,{encoded_image}"})
 
             # Generate an answer using the OpenAI API
             try:
-                response = client.chat_completions.create(
+                response = openai.ChatCompletion.create(
                     model="gpt-4",
                     messages=messages,
                     max_tokens=1000,
@@ -82,4 +67,3 @@ else:
                 st.write(response.choices[0].message.content.strip())
             except Exception as e:
                 st.error(f"An error occurred: {e}")
-
