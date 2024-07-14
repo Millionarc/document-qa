@@ -5,7 +5,49 @@ from PIL import Image
 import base64
 import io
 
+slides = [
+    {
+        "title": "Problem Statement",
+        "content": "In healthcare, patients often need quick, reliable advice on their symptoms and health concerns. "
+                   "Traditional healthcare systems can be slow and sometimes inaccessible, leading to delays in diagnosis and treatment.",
+        "image": "problem.jpg"  # Replace with a relevant image path
+    },
+    {
+        "title": "Our Solution",
+        "content": "We developed a Smart Healthcare Advisor using GPT-4 and Streamlit to provide immediate, reliable health advice based on user inputs and optional image uploads. "
+                   "This helps users get preliminary health advice quickly, guiding them on whether to seek further medical attention.",
+        "image": "solution.jpg"  # Replace with a relevant image path
+    },
+    {
+        "title": "How We Implemented It",
+        "content": "We used Streamlit to create a user-friendly interface where users can input their symptoms, duration, additional information, and optionally upload an image. "
+                   "The app uses OpenAI's GPT-4 to analyze the inputs and provide health advice.",
+        "image": "implementation.jpg"  # Replace with a relevant image path
+    },
+    {
+        "title": "Streamlit Integration",
+        "content": "Streamlit allowed us to quickly develop and deploy our application. "
+                   "We utilized various Streamlit components such as text inputs, file uploaders, and sliders to create an interactive and intuitive user experience.",
+        "image": "streamlit.jpg"  # Replace with a relevant image path
+    },
+    {
+        "title": "Conclusion",
+        "content": "Our Smart Healthcare Advisor demonstrates the potential of combining AI with user-friendly interfaces to improve accessibility and efficiency in healthcare advice. "
+                   "Future developments could include more advanced image analysis and integration with healthcare databases.",
+        "image": "conclusion.jpg"  # Replace with a relevant image path
+    }
+]
 
+# Create a slider to navigate through the slides
+slide_number = st.slider("Navigate through the slides", 1, len(slides), 1)
+
+# Display the selected slide
+slide = slides[slide_number - 1]
+st.title(slide["title"])
+st.write(slide["content"])
+if slide["image"]:
+    st.image(slide["image"])
+    
 # Show title and description.
 st.title("🩺 Smart Healthcare Advisor")
 st.write(
