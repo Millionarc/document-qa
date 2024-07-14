@@ -4,53 +4,9 @@ import openai
 from PIL import Image
 import base64
 import io
+from gtts import gTTS
 
-slides = [
-    {
-        "title": "Problem Statement",
-        "content": "In healthcare, patients often need quick, reliable advice on their symptoms and health concerns. "
-                   "Traditional healthcare systems can be slow and sometimes inaccessible, leading to delays in diagnosis and treatment.",
-        "image": "https://avatars.githubusercontent.com/u/72100945?v=4"  # Replace with a relevant image path
-    },
-    {
-        "title": "Our Solution",
-        "content": "We developed a Smart Healthcare Advisor using GPT-4 and Streamlit to provide immediate, reliable health advice based on user inputs and optional image uploads. "
-                   "This helps users get preliminary health advice quickly, guiding them on whether to seek further medical attention.",
-        "image": "https://avatars.githubusercontent.com/u/72100945?v=4"  # Replace with a relevant image path
-    },
-    {
-        "title": "How We Implemented It",
-        "content": "We used Streamlit to create a user-friendly interface where users can input their symptoms, duration, additional information, and optionally upload an image. "
-                   "The app uses OpenAI's GPT-4 to analyze the inputs and provide health advice.",
-        "image": "https://avatars.githubusercontent.com/u/72100945?v=4"  # Replace with a relevant image path
-    },
-    {
-        "title": "Streamlit Integration",
-        "content": "Streamlit allowed us to quickly develop and deploy our application. "
-                   "We utilized various Streamlit components such as text inputs, file uploaders, and sliders to create an interactive and intuitive user experience.",
-        "image": "https://avatars.githubusercontent.com/u/72100945?v=4"  # Replace with a relevant image path
-    },
-    {
-        "title": "Conclusion",
-        "content": "Our Smart Healthcare Advisor demonstrates the potential of combining AI with user-friendly interfaces to improve accessibility and efficiency in healthcare advice. "
-                   "Future developments could include more advanced image analysis and integration with healthcare databases.",
-        "image": "https://avatars.githubusercontent.com/u/72100945?v=4"  # Replace with a relevant image path
-    }
-]
 
-# Create a slider to navigate through the slides
-
-# Display the selected slide
-slide_number = 1
-
-slide = slides[slide_number - 1]
-st.title(slide["title"])
-st.write(slide["content"])
-slide_number = st.slider("Navigate through the slides", 1, len(slides), 1)
-
-if slide["image"]:
-    st.image(slide["image"])
-    
 # Show title and description.
 st.title("🩺 Smart Healthcare Advisor")
 st.write(
@@ -82,7 +38,7 @@ else:
         "8. Extremely Severe",
     ])    
     if (severity == "8. Extremely Severe"):
-        st.write("We Reccommend That You See a Doctor Immediatly, The Smart Healthcare Advisor Does Not Have The Same Expertise As A Doctor and Cannot Give Out Professional Medical Advice")
+        st.write("We recommend that you see a doctor immediately. The Smart Healthcare Advisor does not have the same expertise as a doctor and cannot give out professional medical advice.")
   
     duration = st.text_input("Duration", placeholder="Enter duration of symptoms")
     additional_info = st.text_area(
@@ -131,9 +87,27 @@ else:
                     temperature=0.7,
                 )
 
-                # Display the response
                 st.subheader("Health Advice")
-                st.write(response.choices[0].message.content.strip())
+                health_advice = response.choices[0].message.content.strip()
+                st.write(health_advice)
+                
+                # Save the advice in session state
+                st.session_state.health_advice = health_advice
+
             except Exception as e:
                 st.error(f"An error occurred: {e}")
+    
+    # Play audio if "Trouble Reading?" button is pressed
+    if "health_advice" in st.session_state and st.button("Trouble Reading?"):
+        try:
+            health_advice = st.session_state.health_advice
+            tts = gTTS(text=health_advice, lang='en')
+            tts.save("health_advice.mp3")
+            audio_file = open("health_advice.mp3", "rb")
+            audio_bytes = audio_file.read()
+            st.audio(audio_bytes, format="audio/mp3")
+            audio_file.close()
+        except Exception as e:
+            st.error(f"An error occurred with TTS: {e}")
+
     st.write("In case of an emergency, please contact your local medical facility or call your country's emergency number.")
