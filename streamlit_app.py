@@ -54,8 +54,10 @@ else:
                 image_message = {
                     "role": "user",
                     "content": {
-                        "type": "image_url",
-                        "image_url": f"data:image/jpeg;base64,{encoded_image}"
+                        "type": "image",
+                        "image": {
+                            "url": f"data:image/jpeg;base64,{encoded_image}"
+                        }
                     }
                 }
                 messages.append(image_message)
@@ -63,7 +65,7 @@ else:
             # Generate an answer using the OpenAI API
             try:
                 response = openai.ChatCompletion.create(
-                    model="gpt-4-turbo",
+                    model="gpt-4",
                     messages=messages,
                     max_tokens=1000,
                     temperature=0.7,
@@ -74,3 +76,4 @@ else:
                 st.write(response.choices[0].message['content'].strip())
             except Exception as e:
                 st.error(f"An error occurred: {e}")
+
