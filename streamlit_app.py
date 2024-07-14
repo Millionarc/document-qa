@@ -109,9 +109,12 @@ else:
             st.error(f"An error occurred with TTS: {e}")
     
     st.write("")
-    st.write("In case of an emergency, please contact your local medical facility or call your country's emergency number.")
     st.write("")
     st.write("")
+    st.write("")
+    st.write("")
+    st.write("")
+    st.write("In case of an emergency, please contact your local medical facility or call 911.")
     st.write("")
 
     # Add "Chat with a doctor" button
