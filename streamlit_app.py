@@ -106,6 +106,17 @@ else:
                 audio_bytes = audio_file.read()
                 st.audio(audio_bytes, format="audio/mp3")
                 audio_file.close()
+
+                # Use JavaScript to play audio automatically
+                st.markdown(
+                    """
+                    <script>
+                    var audio = new Audio(URL.createObjectURL(new Blob([new Uint8Array(audioBytes)], {type: 'audio/mp3'})));
+                    audio.play();
+                    </script>
+                    """,
+                    unsafe_allow_html=True
+                )
             except Exception as e:
                 st.error(f"An error occurred with TTS: {e}")
     
