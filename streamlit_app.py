@@ -4,7 +4,6 @@ from PIL import Image
 import base64
 import io
 
-client = OpenAI()
 
 # Show title and description.
 st.title("🩺 Smart Healthcare Advisor")
@@ -64,7 +63,7 @@ else:
                 )
             # Generate an answer using the OpenAI API
             try:
-                response = client.chat.completions.create(
+                response = openai.chat.completions.create(
                     model="gpt-4o",
                     messages=messages,
                     max_tokens=1000,
