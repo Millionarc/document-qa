@@ -1,4 +1,3 @@
-
 import streamlit as st
 import openai
 from PIL import Image
@@ -6,13 +5,17 @@ import base64
 import io
 from gtts import gTTS
 
+# Sidebar with "Chat with a doctor" button
+st.sidebar.title("Navigation")
+if st.sidebar.button("Chat with a doctor"):
+    st.sidebar.write("This feature is coming soon. Stay tuned!")
 
 # Show title and description.
 st.title("🩺 Smart Healthcare Advisor")
 st.write(
     "Input your symptoms, severity, duration, and any additional information below. "
     "Optionally, you can upload an image. The app will analyze the information and provide health advice. "
-    "As a reminder, this is not proffessional Medical Advice, and if you are unsure. It is always best to vist a doctor."
+    "As a reminder, this is not professional Medical Advice, and if you are unsure, it is always best to visit a doctor."
 )
 
 # Ask user for their OpenAI API key via `st.text_input`.
@@ -26,18 +29,18 @@ else:
     # Input fields for symptoms, duration, and additional information
     symptoms = st.text_input("Symptoms", placeholder="Enter your symptoms")
     severity = st.select_slider(
-    "How Severe Are Your Symptoms?",
-    options = [
-        "1. Very Mild",
-        "2. Mild",
-        "3. Mild-Moderate",
-        "4. Moderate",
-        "5. Moderate-Severe",
-        "6. Severe",
-        "7. Very Severe",
-        "8. Extremely Severe",
-    ])    
-    if (severity == "8. Extremely Severe"):
+        "How Severe Are Your Symptoms?",
+        options=[
+            "1. Very Mild",
+            "2. Mild",
+            "3. Mild-Moderate",
+            "4. Moderate",
+            "5. Moderate-Severe",
+            "6. Severe",
+            "7. Very Severe",
+            "8. Extremely Severe",
+        ])    
+    if severity == "8. Extremely Severe":
         st.write("We recommend that you see a doctor immediately. The Smart Healthcare Advisor does not have the same expertise as a doctor and cannot give out professional medical advice.")
   
     duration = st.text_input("Duration", placeholder="Enter duration of symptoms")
