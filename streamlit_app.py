@@ -1,53 +1,87 @@
 import streamlit as st
-from openai import OpenAI
+import openai
+from PIL import Image
+import io
 
 # Show title and description.
-st.title("📄 Document question answering")
+st.title("🩺 Smart Healthcare Advisor")
 st.write(
-    "Upload a document below and ask a question about it – GPT will answer! "
+    "Input your symptoms, duration, and any additional information below. "
+    "Optionally, you can upload an image. The app will analyze the information and provide health advice using GPT. "
     "To use this app, you need to provide an OpenAI API key, which you can get [here](https://platform.openai.com/account/api-keys). "
 )
 
 # Ask user for their OpenAI API key via `st.text_input`.
-# Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
-# via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
 openai_api_key = st.text_input("OpenAI API Key", type="password")
 if not openai_api_key:
     st.info("Please add your OpenAI API key to continue.", icon="🗝️")
 else:
+    # Initialize OpenAI API
+    openai.api_key = openai_api_key
 
-    # Create an OpenAI client.
-    client = OpenAI(api_key=openai_api_key)
-
-    # Let the user upload a file via `st.file_uploader`.
-    uploaded_file = st.file_uploader(
-        "Upload a document (.txt or .md)", type=("txt", "md")
+    # Input fields for symptoms, duration, and additional information
+    symptoms = st.text_input("Symptoms", placeholder="Enter your symptoms")
+    duration = st.text_input("Duration", placeholder="Enter duration of symptoms")
+    additional_info = st.text_area(
+        "Additional Information",
+        placeholder="Enter any additional information"
     )
 
-    # Ask the user for a question via `st.text_area`.
-    question = st.text_area(
-        "Now ask a question about the document!",
-        placeholder="Can you give me a short summary?",
-        disabled=not uploaded_file,
-    )
+    # Optional image upload
+    uploaded_image = st.file_uploader("Upload an image (optional)", type=["jpg", "jpeg", "png"])
 
-    if uploaded_file and question:
+    # Generate health advice based on input
+    if st.button("Analyze Symptoms"):
+        if not symptoms or not duration or not additional_info:
+            st.warning("Please fill out all fields.")
+        else:
+            # Process the uploaded image if provided
+            if uploaded_image:
+                image = Image.open(uploaded_image)
+                buffered = io.BytesIO()
+                image.save(buffered, format="JPEG")
+                img_str = buffered.getvalue()
 
-        # Process the uploaded file and question.
-        document = uploaded_file.read().decode()
-        messages = [
-            {
-                "role": "user",
-                "content": f"Here's a document: {document} \n\n---\n\n {question}",
-            }
-        ]
+                # Send the image to OpenAI with the input text
+                prompt = (
+                    f"Analyze the following symptoms: {symptoms} for {duration}. "
+                    f"Additional info: {additional_info}. Also, consider the attached image for diagnosis."
+                )
 
-        # Generate an answer using the OpenAI API.
-        stream = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
-            stream=True,
-        )
+                # Generate an answer using the OpenAI API
+                try:
+                    response = openai.Image.create(
+                        model="image-alpha-001",
+                        prompt=prompt,
+                        n=1,
+                        images=img_str,
+                        max_tokens=1000,
+                        temperature=0.7,
+                    )
 
-        # Stream the response to the app using `st.write_stream`.
-        st.write_stream(stream)
+                    # Display the response
+                    st.subheader("Health Advice")
+                    st.write(response.choices[0].text.strip())
+                except Exception as e:
+                    st.error(f"An error occurred: {e}")
+            else:
+                # Create the prompt without image
+                prompt = (
+                    f"Analyze the following symptoms: {symptoms} for {duration}. "
+                    f"Additional info: {additional_info}."
+                )
+
+                # Generate an answer using the OpenAI API
+                try:
+                    response = openai.Completion.create(
+                        engine="text-davinci-003",
+                        prompt=prompt,
+                        max_tokens=1000,
+                        temperature=0.7,
+                    )
+
+                    # Display the response
+                    st.subheader("Health Advice")
+                    st.write(response.choices[0].text.strip())
+                except Exception as e:
+                    st.error(f"An error occurred: {e}")
