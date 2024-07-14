@@ -91,5 +91,4 @@ else:
                 st.write(response.choices[0].message.content.strip())
             except Exception as e:
                 st.error(f"An error occurred: {e}")
-    st.subheader("Emergency Contacts")
     st.write("In case of an emergency, please contact your local medical facility or call your country's emergency number.")
