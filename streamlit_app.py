@@ -34,7 +34,7 @@ else:
     # Function to encode image to base64
     def encode_image(image):
         buffered = io.BytesIO()
-        image.save(buffered, format="JPEG")
+        image.save(buffered, format="JPG")
         img_str = base64.b64encode(buffered.getvalue()).decode()
         return img_str
 
