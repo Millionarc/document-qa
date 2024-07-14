@@ -37,7 +37,7 @@ else:
         "8. Extremely Severe",
     ])    
     if (severity == "8. Extremely Severe"){
-        st.write("We Reccommend That You See a Doctor Immediatly"}
+        st.write("We Reccommend That You See a Doctor Immediatly")}
   
     duration = st.text_input("Duration", placeholder="Enter duration of symptoms")
     additional_info = st.text_area(
