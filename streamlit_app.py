@@ -5,7 +5,6 @@ import base64
 import io
 from gtts import gTTS
 
-# Show title and description.
 st.title("🩺 Smart Healthcare Advisor")
 st.write(
     "Input your symptoms, severity, duration, and any additional information below. "
@@ -13,15 +12,12 @@ st.write(
     "As a reminder, this is not professional Medical Advice, and if you are unsure, it is always best to visit a doctor."
 )
 
-# Ask user for their OpenAI API key via `st.text_input`.
 openai_api_key = st.text_input("OpenAI API Key", type="password")
 if not openai_api_key:
     st.info("Please add your OpenAI API key to continue.", icon="🗝️")
 else:
-    # Initialize OpenAI API
     openai.api_key = openai_api_key
 
-    # Input fields for symptoms, duration, and additional information
     symptoms = st.text_input("Symptoms", placeholder="Enter your symptoms")
     severity = st.select_slider(
         "How Severe Are Your Symptoms?",
@@ -44,17 +40,14 @@ else:
         placeholder="Enter any additional information"
     )
 
-    # Optional image upload
     uploaded_image = st.file_uploader("Upload an image (optional)", type=["jpg", "jpeg", "png"])
 
-    # Function to encode image to base64
     def encode_image(image):
         buffered = io.BytesIO()
         image.save(buffered, format="JPEG")
         img_str = base64.b64encode(buffered.getvalue()).decode()
         return img_str
 
-    # Generate health advice based on input
     if st.button("Analyze Symptoms"):
         if not symptoms or not duration or not additional_info:
             st.warning("Please fill out all fields.")
@@ -77,7 +70,6 @@ else:
                     }
                 )
 
-            # Show a loading spinner while the AI is generating a response
             with st.spinner('Analyzing your symptoms...'):
                 try:
                     response = openai.chat.completions.create(
@@ -91,13 +83,11 @@ else:
                     health_advice = response.choices[0].message.content.strip()
                     st.write(health_advice)
                     
-                    # Save the advice in session state
                     st.session_state.health_advice = health_advice
 
                 except Exception as e:
                     st.error(f"An error occurred: {e}")
 
-    # Play audio if "Trouble Reading?" button is pressed
     if "health_advice" in st.session_state:
         if st.button("Trouble Reading?"):
             try:
@@ -120,6 +110,5 @@ else:
     st.write("In case of an emergency, please contact your local medical facility or call 911.")
     st.write("")
 
-    # Add "Chat with a doctor" button
     if st.button("Chat with a doctor"):
         st.write("This feature is coming soon. Stay tuned!")
