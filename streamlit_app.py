@@ -36,52 +36,39 @@ else:
             st.warning("Please fill out all fields.")
         else:
             # Process the uploaded image if provided
+            image_info = ""
             if uploaded_image:
                 image = Image.open(uploaded_image)
                 buffered = io.BytesIO()
                 image.save(buffered, format="JPEG")
                 img_str = buffered.getvalue()
 
-                # Send the image to OpenAI with the input text
-                prompt = (
-                    f"Analyze the following symptoms: {symptoms} for {duration}. "
-                    f"Additional info: {additional_info}. Also, consider the attached image for diagnosis."
+                # Since OpenAI's latest models do not natively support image input, you would typically
+                # need a separate service for image analysis. For now, we will include the image
+                # details in the prompt for context.
+                image_info = f" with an attached image. The image file name is {uploaded_image.name}."
+
+            # Create the prompt
+            prompt = (
+                f"Analyze the following symptoms: {symptoms} for {duration}. "
+                f"Additional info: {additional_info}{image_info}"
+            )
+
+            # Generate an answer using the OpenAI API
+            try:
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "You are a helpful assistant for medical diagnosis."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    max_tokens=1000,
+                    temperature=0.7,
                 )
 
-                # Generate an answer using the OpenAI API
-                try:
-                    response = openai.Image.create(
-                        model="image-alpha-001",
-                        prompt=prompt,
-                        n=1,
-                        images=img_str,
-                        max_tokens=1000,
-                        temperature=0.7,
-                    )
+                # Display the response
+                st.subheader("Health Advice")
+                st.write(response.choices[0].message['content'].strip())
+            except Exception as e:
+                st.error(f"An error occurred: {e}")
 
-                    # Display the response
-                    st.subheader("Health Advice")
-                    st.write(response.choices[0].text.strip())
-                except Exception as e:
-                    st.error(f"An error occurred: {e}")
-            else:
-                # Create the prompt without image
-                prompt = (
-                    f"Analyze the following symptoms: {symptoms} for {duration}. "
-                    f"Additional info: {additional_info}."
-                )
-
-                # Generate an answer using the OpenAI API
-                try:
-                    response = openai.Completion.create(
-                        engine="text-davinci-003",
-                        prompt=prompt,
-                        max_tokens=1000,
-                        temperature=0.7,
-                    )
-
-                    # Display the response
-                    st.subheader("Health Advice")
-                    st.write(response.choices[0].text.strip())
-                except Exception as e:
-                    st.error(f"An error occurred: {e}")
