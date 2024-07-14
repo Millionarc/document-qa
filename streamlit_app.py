@@ -5,11 +5,6 @@ import base64
 import io
 from gtts import gTTS
 
-# Sidebar with "Chat with a doctor" button
-st.sidebar.title("Navigation")
-if st.sidebar.button("Chat with a doctor"):
-    st.sidebar.write("This feature is coming soon. Stay tuned!")
-
 # Show title and description.
 st.title("🩺 Smart Healthcare Advisor")
 st.write(
@@ -112,5 +107,9 @@ else:
             audio_file.close()
         except Exception as e:
             st.error(f"An error occurred with TTS: {e}")
+
+    # Add "Chat with a doctor" button
+    if st.button("Chat with a doctor"):
+        st.write("This feature is coming soon. Stay tuned!")
 
     st.write("In case of an emergency, please contact your local medical facility or call your country's emergency number.")
