@@ -92,22 +92,21 @@ else:
                 # Save the advice in session state
                 st.session_state.health_advice = health_advice
 
+                # Show "Trouble Reading?" button after analyzing symptoms
+                if st.button("Trouble Reading?"):
+                    try:
+                        tts = gTTS(text=health_advice, lang='en')
+                        tts.save("health_advice.mp3")
+                        audio_file = open("health_advice.mp3", "rb")
+                        audio_bytes = audio_file.read()
+                        st.audio(audio_bytes, format="audio/mp3")
+                        audio_file.close()
+                    except Exception as e:
+                        st.error(f"An error occurred with TTS: {e}")
+
             except Exception as e:
                 st.error(f"An error occurred: {e}")
-    
-    # Play audio if "Trouble Reading?" button is pressed
-    if "health_advice" in st.session_state and st.button("Trouble Reading?"):
-        try:
-            health_advice = st.session_state.health_advice
-            tts = gTTS(text=health_advice, lang='en')
-            tts.save("health_advice.mp3")
-            audio_file = open("health_advice.mp3", "rb")
-            audio_bytes = audio_file.read()
-            st.audio(audio_bytes, format="audio/mp3")
-            audio_file.close()
-        except Exception as e:
-            st.error(f"An error occurred with TTS: {e}")
-    
+
     st.write("")
     st.write("")
     st.write("")
@@ -120,4 +119,3 @@ else:
     # Add "Chat with a doctor" button
     if st.button("Chat with a doctor"):
         st.write("This feature is coming soon. Stay tuned!")
-
