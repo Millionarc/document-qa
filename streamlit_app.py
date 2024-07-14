@@ -55,7 +55,7 @@ else:
 
             # Generate an answer using the OpenAI API
             try:
-                response = openai.ChatCompletion.create(
+                response = openai.chat.completions.create(
                     model="gpt-4",
                     messages=messages,
                     max_tokens=1000,
