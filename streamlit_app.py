@@ -51,7 +51,7 @@ else:
             if uploaded_image:
                 image = Image.open(uploaded_image)
                 encoded_image = encode_image(image)
-                messages.append({"role": "user", "content": f"Here's an image for further analysis: data:image/jpeg;base64,{encoded_image}"})
+                messages.append({"role": "user", "content": f"Here's an image for further analysis: data:image/jpg;base64,{encoded_image}"})
 
             # Generate an answer using the OpenAI API
             try:
