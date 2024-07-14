@@ -5,7 +5,7 @@ import base64
 import io
 
 # Show title and description.
-st.title("🩺 Smart Healthcare Advisor test")
+st.title("🩺 Smart Healthcare Advisor")
 st.write(
     "Input your symptoms, duration, and any additional information below. "
     "Optionally, you can upload an image. The app will analyze the information and provide health advice using GPT. "
@@ -18,7 +18,7 @@ if not openai_api_key:
     st.info("Please add your OpenAI API key to continue.", icon="🗝️")
 else:
     # Initialize OpenAI API
-    openai.api_key = openai_api_key
+    client = openai.OpenAI(api_key=openai_api_key)
 
     # Input fields for symptoms, duration, and additional information
     symptoms = st.text_input("Symptoms", placeholder="Enter your symptoms")
@@ -54,17 +54,23 @@ else:
                 image_message = {
                     "role": "user",
                     "content": {
+                        "type": "text",
+                        "text": "Here's an image for further analysis."
+                    }
+                }
+                image_data = {
+                    "role": "user",
+                    "content": {
                         "type": "image",
-                        "image": {
-                            "url": f"data:image/jpeg;base64,{encoded_image}"
-                        }
+                        "data": f"data:image/jpeg;base64,{encoded_image}"
                     }
                 }
                 messages.append(image_message)
+                messages.append(image_data)
 
             # Generate an answer using the OpenAI API
             try:
-                response = openai.ChatCompletion.create(
+                response = client.chat_completions.create(
                     model="gpt-4",
                     messages=messages,
                     max_tokens=1000,
@@ -73,7 +79,7 @@ else:
 
                 # Display the response
                 st.subheader("Health Advice")
-                st.write(response.choices[0].message['content'].strip())
+                st.write(response.choices[0].message.content.strip())
             except Exception as e:
                 st.error(f"An error occurred: {e}")
 
