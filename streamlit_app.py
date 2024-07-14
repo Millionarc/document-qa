@@ -34,7 +34,7 @@ else:
     # Function to encode image to base64
     def encode_image(image):
         buffered = io.BytesIO()
-        image.save(buffered, format="JPG")
+        image.save(buffered, format="JPEG")
         img_str = base64.b64encode(buffered.getvalue()).decode()
         return img_str
 
@@ -51,19 +51,5 @@ else:
             if uploaded_image:
                 image = Image.open(uploaded_image)
                 encoded_image = encode_image(image)
-                messages.append({"role": "user", "content": f"Here's an image for further analysis: data:image/jpg;base64,{encoded_image}"})
-
-            # Generate an answer using the OpenAI API
-            try:
-                response = openai.chat.completions.create(
-                    model="gpt-4o",
-                    messages=messages,
-                    max_tokens=1000,
-                    temperature=0.7,
-                )
-
-                # Display the response
-                st.subheader("Health Advice")
-                st.write(response.choices[0].message.content.strip())
-            except Exception as e:
-                st.error(f"An error occurred: {e}")
+                image_content = {
+                    "
