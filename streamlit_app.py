@@ -1,6 +1,7 @@
 import streamlit as st
 import openai
 from PIL import Image
+import base64
 import io
 
 # Show title and description.
@@ -30,38 +31,40 @@ else:
     # Optional image upload
     uploaded_image = st.file_uploader("Upload an image (optional)", type=["jpg", "jpeg", "png"])
 
+    # Function to encode image to base64
+    def encode_image(image):
+        buffered = io.BytesIO()
+        image.save(buffered, format="JPEG")
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+        return img_str
+
     # Generate health advice based on input
     if st.button("Analyze Symptoms"):
         if not symptoms or not duration or not additional_info:
             st.warning("Please fill out all fields.")
         else:
-            # Process the uploaded image if provided
-            image_info = ""
+            messages = [
+                {"role": "system", "content": "You are a helpful assistant for medical diagnosis."},
+                {"role": "user", "content": f"Analyze the following symptoms: {symptoms} for {duration}. Additional info: {additional_info}."}
+            ]
+
             if uploaded_image:
                 image = Image.open(uploaded_image)
-                buffered = io.BytesIO()
-                image.save(buffered, format="JPEG")
-                img_str = buffered.getvalue()
-
-                # Since OpenAI's latest models do not natively support image input, you would typically
-                # need a separate service for image analysis. For now, we will include the image
-                # details in the prompt for context.
-                image_info = f" with an attached image. The image file name is {uploaded_image.name}."
-
-            # Create the prompt
-            prompt = (
-                f"Analyze the following symptoms: {symptoms} for {duration}. "
-                f"Additional info: {additional_info}{image_info}"
-            )
+                encoded_image = encode_image(image)
+                image_message = {
+                    "role": "user",
+                    "content": {
+                        "type": "image_url",
+                        "image_url": f"data:image/jpeg;base64,{encoded_image}"
+                    }
+                }
+                messages.append(image_message)
 
             # Generate an answer using the OpenAI API
             try:
                 response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
-                    messages=[
-                        {"role": "system", "content": "You are a helpful assistant for medical diagnosis."},
-                        {"role": "user", "content": prompt}
-                    ],
+                    model="gpt-4-turbo",
+                    messages=messages,
                     max_tokens=1000,
                     temperature=0.7,
                 )
@@ -71,4 +74,3 @@ else:
                 st.write(response.choices[0].message['content'].strip())
             except Exception as e:
                 st.error(f"An error occurred: {e}")
-
