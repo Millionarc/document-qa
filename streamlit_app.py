@@ -1,3 +1,4 @@
+
 import streamlit as st
 import openai
 from PIL import Image
@@ -9,8 +10,8 @@ import io
 st.title("🩺 Smart Healthcare Advisor")
 st.write(
     "Input your symptoms, duration, and any additional information below. "
-    "Optionally, you can upload an image. The app will analyze the information and provide health advice using GPT. "
-    "To use this app, you need to provide an OpenAI API key, which you can get [here](https://platform.openai.com/account/api-keys). "
+    "Optionally, you can upload an image. The app will analyze the information and provide health advice. "
+    "As a reminder, this is not proffessional Medical Advice, and if you are unsure. It is always best to vist a doctor."
 )
 
 # Ask user for their OpenAI API key via `st.text_input`.
@@ -75,3 +76,5 @@ else:
                 st.write(response.choices[0].message.content.strip())
             except Exception as e:
                 st.error(f"An error occurred: {e}")
+    st.subheader("Emergency Contacts")
+    st.write("In case of an emergency, please contact your local medical facility or call your country's emergency number.")
