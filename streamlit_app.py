@@ -9,7 +9,7 @@ import io
 # Show title and description.
 st.title("🩺 Smart Healthcare Advisor")
 st.write(
-    "Input your symptoms, duration, and any additional information below. "
+    "Input your symptoms, severity, duration, and any additional information below. "
     "Optionally, you can upload an image. The app will analyze the information and provide health advice. "
     "As a reminder, this is not proffessional Medical Advice, and if you are unsure. It is always best to vist a doctor."
 )
@@ -24,6 +24,21 @@ else:
 
     # Input fields for symptoms, duration, and additional information
     symptoms = st.text_input("Symptoms", placeholder="Enter your symptoms")
+    severity = st.select_slider(
+    "How Severe Are Your Symptoms?",
+    severity_options = [
+        "1. Very Mild",
+        "2. Mild",
+        "3. Mild-Moderate",
+        "4. Moderate",
+        "5. Moderate-Severe",
+        "6. Severe",
+        "7. Very Severe",
+        "8. Extremely Severe",
+    ]    
+    st.write(severity)
+    
+    
     duration = st.text_input("Duration", placeholder="Enter duration of symptoms")
     additional_info = st.text_area(
         "Additional Information",
